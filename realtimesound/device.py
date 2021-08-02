@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 """Audio input and output device."""
 
-from sounddevice import Stream, OutputStream,\
-    InputStream, _InputOutputPair as IOPair,\
+from sounddevice import _InputOutputPair as IOPair,\
     check_input_settings, check_output_settings
 from typing import List
 from numpy import ndarray
 from multiprocessing import Event, Queue
-from realtimesound._streamer import _Player, _Recorder, _PlaybackRecorder, _Streamer
-from realtimesound.monitor import Monitor, MonitorThread, MonitorProcess
+from realtimesound._streamer import _Player, _Recorder,\
+    _PlaybackRecorder, _Streamer
+from realtimesound.monitor import Monitor,\
+    MonitorThread, MonitorProcess
 import atexit
 
 
@@ -45,6 +46,7 @@ class Device(object):
         self._inputs = inputs
         self._outputs = outputs
         self._has_monitor = Event()
+        self._extern_monitor = Event()
         self._running = Event()
         self._monitorQ = Queue()
         return
@@ -179,6 +181,7 @@ class Device(object):
 
         """
         self._has_monitor.clear()
+        self._extern_monitor.clear()
         if MonitorSub is not None and issubclass(MonitorSub, Monitor):
             self._has_monitor.set()
         self._MonitorSub = MonitorSub
@@ -186,8 +189,32 @@ class Device(object):
         self._MonitorKWargs = kwargs
         return
 
-    def play(self, data: ndarray, *,
-             block: bool = True):
+    def use_extern_monitor(self) -> (Queue, Event):
+        """
+        Provide access to monitor queue and the stream running state.
+
+        In the case a user want to access the data provided to monitor without
+        using the provided framework, this method grants access to the queue
+        and the running state of the stream, allowing syncronization.
+
+        Notes
+        -----
+        If not using the provided `Monitor` implementation, any allocated
+        resource must be managed by the extern monitor provider. This includes
+        initialization, proper data retrieval, and termination.
+
+        Returns
+        -------
+        Queue, Event
+            The monitor queue used to retrieve data and the running state of
+            the stream.
+
+        """
+        self._has_monitor.set()
+        self._extern_monitor.set()
+        return self._monitorQ, self._running
+
+    def play(self, data: ndarray, *, block: bool = True):
         """
         Play `data` as a sound.
 
@@ -206,14 +233,13 @@ class Device(object):
         """
         _streamer_cleanup()
         _streamer = _setup_streamer(_Player, self, data, block)
-        if self._has_monitor.is_set():
+        if self._has_monitor.is_set() and not self._extern_monitor.is_set():
             _monitor_cleanup()
             _start_monitor(self, self.channels[1])
         _streamer.start_streaming()
         return
 
-    def record(self, tlen: float, *,
-               block: bool = True) -> ndarray:
+    def record(self, tlen: float, *, block: bool = True) -> ndarray:
         """
         Record sound of `tlen` duration.
 
@@ -233,14 +259,13 @@ class Device(object):
         """
         _streamer_cleanup()
         _streamer = _setup_streamer(_Recorder, self, tlen, block)
-        if self._has_monitor.is_set():
+        if self._has_monitor.is_set() and not self._extern_monitor.is_set():
             _monitor_cleanup()
             _start_monitor(self, self.channels[0])
         _streamer.start_streaming()
         return _streamer._buffer.copy() if block else _streamer._buffer
 
-    def playrec(self, data: ndarray, *,
-                block: bool = True) -> ndarray:
+    def playrec(self, data: ndarray, *, block: bool = True) -> ndarray:
         """
         Simultaneously play `data` and record an audio of same duration.
 
@@ -260,7 +285,7 @@ class Device(object):
         """
         _streamer_cleanup()
         _streamer = _setup_streamer(_PlaybackRecorder, self, data, block)
-        if self._has_monitor.is_set():
+        if self._has_monitor.is_set() and not self._extern_monitor.is_set():
             _monitor_cleanup()
             _start_monitor(self, self.channels)
         _streamer.start_streaming()
