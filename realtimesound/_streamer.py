@@ -2,6 +2,7 @@
 """Process independent stream handler."""
 
 from multiprocessing import Process, Queue, Event, Value
+from threading import Timer
 from queue import Empty
 from sounddevice import Stream, OutputStream,\
     InputStream, CallbackStop, _InputOutputPair
@@ -11,7 +12,7 @@ from realtimesound._buffer import _MemoryBuffer
 import atexit
 
 
-_buffer = _MemoryBuffer(0, 0, 0)  # placeholder
+_buffer = None  # _MemoryBuffer(0, 0, 0)  # placeholder
 
 
 class _Streamer(Process):
@@ -119,6 +120,7 @@ class _Recorder(_Streamer):
         self._buffer = zeros((self.durationSamples,
                               self.channels[0]), dtype='float32')
         _start_buffer(self._buffer, self.bufferQ, self.running)
+        Timer(1.1*tlen, _buffer_cleanup).start()
         return
 
     def run(self):
@@ -150,6 +152,7 @@ class _PlaybackRecorder(_Streamer):
                                    self.outputs[-1] + 1]
         self._streamType = Stream
         _start_buffer(self._buffer, self.bufferQ, self.running)
+        Timer(1.1*(self.durationSamples/self.samplerate), _buffer_cleanup).start()
         return
 
     def run(self):
@@ -207,12 +210,12 @@ class _ContinuousStreamer(_Streamer):
         return
 
     def _new_recdata(self, tlen):
-        _buffer_cleanup()
         self._callback_safe.wait()
         self._recSamples.value = int(tlen * self.samplerate + 0.5)
         self._recIdx.value = 0
         self._buffer = zeros((self._recSamples.value, self.channels[0]))
         _start_buffer(self._buffer, self.bufferQ, self._recording)
+        Timer(1.1*tlen, _buffer_cleanup).start()
         self._recording.set()
         return
 
@@ -270,7 +273,8 @@ def _buffer_cleanup():
     if _buffer.is_alive():
         while not _buffer.q.empty():
             _ = _buffer.q.get_nowait()
+    _buffer.join(timeout=5.)
     return
 
 
-atexit.register(_buffer_cleanup)
+# atexit.register(_buffer_cleanup)

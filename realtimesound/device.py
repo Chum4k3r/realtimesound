@@ -6,6 +6,7 @@ from sounddevice import _InputOutputPair as IOPair,\
 from typing import List
 from numpy import ndarray
 from multiprocessing import Event, Queue
+from threading import Timer
 from realtimesound._streamer import _Player, _Recorder,\
     _PlaybackRecorder, _ContinuousStreamer
 from realtimesound.monitor import Monitor,\
@@ -267,12 +268,12 @@ class Device(object):
             block = False
             self._playQ.put(data)
         else:
-            _streamer_cleanup()
             _streamer = _setup_streamer(_Player, self, data, block)
             if self._has_monitor.is_set() and not self._extern_monitor.is_set():
-                _monitor_cleanup()
                 _start_monitor(self, self.channels[1])
+                Timer(1.1*(data.shape[0]/self.samplerate), _monitor_cleanup).start()
             _streamer.start_streaming()
+            Timer(1.1*(data.shape[0]/self.samplerate), _streamer_cleanup).start()
         return
 
     def record(self, tlen: float, *, block: bool = True) -> ndarray:
@@ -298,12 +299,12 @@ class Device(object):
             block = False
             _streamer._new_recdata(tlen)
         else:
-            _streamer_cleanup()
             _streamer = _setup_streamer(_Recorder, self, tlen, block)
             if self._has_monitor.is_set() and not self._extern_monitor.is_set():
-                _monitor_cleanup()
                 _start_monitor(self, self.channels[0])
+                Timer(1.1*(tlen), _monitor_cleanup).start()
             _streamer.start_streaming()
+            Timer(1.1*(tlen), _streamer_cleanup).start()
         return _streamer._buffer.copy() if block else _streamer._buffer
 
     def playrec(self, data: ndarray, *, block: bool = True) -> ndarray:
@@ -331,23 +332,21 @@ class Device(object):
             _streamer._new_recdata(data.shape[0]/self.samplerate)
             # do online stuff
         else:
-            _streamer_cleanup()
             _streamer = _setup_streamer(_PlaybackRecorder, self, data, block)
             if self._has_monitor.is_set() and not self._extern_monitor.is_set():
-                _monitor_cleanup()
                 _start_monitor(self, self.channels)
+                Timer(1.1*(data.shape[0]/self.samplerate), _monitor_cleanup).start()
             _streamer.start_streaming()
+            Timer(1.1*(data.shape[0]/self.samplerate), _streamer_cleanup).start()
         return _streamer._buffer.copy() if block else _streamer._buffer
 
     def turn_on(self):
         """Turn on the continuous streaming mode."""
         global _streamer
         self._online.set()
-        _streamer_cleanup()
         _streamer = _setup_streamer(_ContinuousStreamer, self,
                                     self._playQ, False)
         if self._has_monitor.is_set() and not self._extern_monitor.is_set():
-            _monitor_cleanup()
             _start_monitor(self, self.channels)
         _streamer.start_streaming()
         pass
@@ -357,6 +356,9 @@ class Device(object):
         global _streamer
         _streamer.running.clear()
         self._online.clear()
+        if self._has_monitor.is_set() and not self._extern_monitor.is_set():
+            _monitor_cleanup()
+        _streamer_cleanup()
         return
 
 
@@ -383,7 +385,7 @@ def _monitor_cleanup():
     return
 
 
-atexit.register(_monitor_cleanup)
+# atexit.register(_monitor_cleanup)
 
 
 def _setup_streamer(streamerType, dev, data, block: bool):
@@ -402,12 +404,9 @@ def _streamer_cleanup():
             _ = _streamer.monitorQ.get_nowait()
         while not _streamer.bufferQ.empty():
             _ = _streamer.monitorQ.get_nowait()
-    try:
-        _streamer.join(timeout=_streamer.durationSamples/_streamer.samplerate)
-    except AttributeError:  # uninitialized streamer
-        pass
+        _streamer.join(timeout=5.)
     _streamer.close()
     return
 
 
-atexit.register(_streamer_cleanup)
+# atexit.register(_streamer_cleanup)
