@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """Process independent stream handler."""
 
-from multiprocessing import Process, Queue, Event
+from multiprocessing import Process, Queue, Event, Value
+from queue import Empty
 from sounddevice import Stream, OutputStream,\
     InputStream, CallbackStop, _InputOutputPair
-from typing import List, Type
+from typing import List
 from numpy import zeros, ndarray
 from realtimesound._buffer import _MemoryBuffer
 import atexit
@@ -47,15 +48,6 @@ class _Streamer(Process):
     def channels(self):
         return [len(self.inputs), len(self.outputs)]
 
-    def run(self):
-        with self._streamType(self.samplerate, self.blocksize,
-                              self.device, self._streamNumChannels,
-                              'float32', 'low', None,
-                              self._callback, self._finished_streaming):
-            self.running.set()
-            self.finished.wait()
-        return
-
     def start_streaming(self):
         self.start()
         self.running.wait()
@@ -66,9 +58,10 @@ class _Streamer(Process):
     def _process_output_data(self, outdata, frames) -> int:
         playframes = (frames if (frames + self.idx) <= self.durationSamples
                       else self.durationSamples - self.idx)
-        outdata[:playframes, self.outputs] = self.playdata[self.idx:self.idx + playframes, :]
-        outdata[playframes:].fill(0)
-        return playframes, outdata.copy()
+        playdata = self.playdata[self.idx:self.idx + playframes, :]
+        outdata.fill(0)
+        outdata[:playframes, self.outputs] = playdata
+        return playframes, playdata
 
     def _process_input_data(self, indata, frames) -> int:
         recframes = (frames if (frames + self.idx) <= self.durationSamples
@@ -99,8 +92,15 @@ class _Player(_Streamer):
         super().__init__(*args, **kwargs)
         self.durationSamples = data.shape[0]
         self.playdata = data.copy()
-        self._streamNumChannels = self.outputs[-1] + 1
-        self._streamType = OutputStream
+        return
+
+    def run(self):
+        with OutputStream(self.samplerate, self.blocksize,
+                          self.device, self.outputs[-1] + 1,
+                          'float32', 'low', None,
+                          self._callback, self._finished_streaming):
+            self.running.set()
+            self.finished.wait()
         return
 
     def _callback(self, outdata, frames, time, status):
@@ -118,9 +118,16 @@ class _Recorder(_Streamer):
         self.durationSamples = round(self.samplerate * tlen + 0.5)
         self._buffer = zeros((self.durationSamples,
                               self.channels[0]), dtype='float32')
-        self._streamNumChannels = self.inputs[-1] + 1
-        self._streamType = InputStream
         _start_buffer(self._buffer, self.bufferQ, self.running)
+        return
+
+    def run(self):
+        with InputStream(self.samplerate, self.blocksize,
+                         self.device, self.inputs[-1] + 1,
+                         'float32', 'low', None,
+                         self._callback, self._finished_streaming):
+            self.running.set()
+            self.finished.wait()
         return
 
     def _callback(self, indata, frames, time, status):
@@ -145,12 +152,109 @@ class _PlaybackRecorder(_Streamer):
         _start_buffer(self._buffer, self.bufferQ, self.running)
         return
 
+    def run(self):
+        with Stream(self.samplerate, self.blocksize,
+                    self.device, [self.inputs[-1] + 1,
+                                  self.outputs[-1] + 1],
+                    'float32', 'low', None,
+                    self._callback, self._finished_streaming):
+            self.running.set()
+            self.finished.wait()
+        return
+
     def _callback(self, indata, outdata, frames, time, status):
         playframes, playdata = self._process_output_data(outdata, frames)
         recframes, recdata = self._process_input_data(indata, frames)
         sframes = max(playframes, recframes)
         self.idx += sframes
         self._end_of_callback(sframes, frames, status, recdata, playdata)
+        return
+
+
+class _ContinuousStreamer(_Streamer):
+    """Continuous streaming streamer."""
+
+    def __init__(self, playQ, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._recIdx = Value('i', 0)
+        self._recSamples = Value('i', 256)
+        self._playIdx = Value('i', 0)
+        self._playSamples = Value('i', 256)
+        self._playQ = playQ
+        self._recording = Event()
+        self._callback_safe = Event()
+        self.playdata = zeros((self._playSamples.value, self.channels[1]))
+        self._buffer = zeros((self._recSamples.value, self.channels[0]))
+        self._callback_safe.set()
+        return
+
+    def run(self):
+        with Stream(self.samplerate, self.blocksize,
+                    self.device, [self.inputs[-1] + 1,
+                                  self.outputs[-1] + 1],
+                    'float32', 'low', None,
+                    self._callback, self._finished_streaming) as self.stream:
+            self.running.set()
+            self.finished.set()
+            while self.running.is_set():
+                try:
+                    playdata = self._playQ.get(timeout=5.)
+                except Empty:
+                    # no playdata issued
+                    continue
+                self._new_playdata(playdata)
+                self.finished.wait(timeout=self._recSamples.value/self.samplerate + 2.)
+        return
+
+    def _new_recdata(self, tlen):
+        _buffer_cleanup()
+        self._callback_safe.wait()
+        self._recSamples.value = int(tlen * self.samplerate + 0.5)
+        self._recIdx.value = 0
+        self._buffer = zeros((self._recSamples.value, self.channels[0]))
+        _start_buffer(self._buffer, self.bufferQ, self._recording)
+        self._recording.set()
+        return
+
+    def _new_playdata(self, playdata):
+        self._callback_safe.wait()
+        self._playSamples.value = playdata.shape[0]
+        self._playIdx.value = 0
+        self.playdata = playdata
+        self.finished.clear()
+        return
+
+    def _callback(self, indata, outdata, frames, time, status):
+        # recording section
+        self._callback_safe.clear()
+        recdata = indata[:, self.inputs]
+        if self._recording.is_set():
+            recframes = (frames if (frames + self._recIdx.value) <= self._recSamples.value
+                         else self._recSamples.value - self._recIdx.value)
+            self.bufferQ.put_nowait([recdata[:recframes]])
+            self._recIdx.value += recframes
+            if recframes < frames:
+                self._recording.clear()
+
+        # playback section
+        outdata.fill(0)
+        playdata = outdata[:, self.outputs]
+        if not self.finished.is_set():
+            playframes = (frames if (frames + self._playIdx.value) <= self._playSamples.value
+                          else self._playSamples.value - self._playIdx.value)
+            playdata[:playframes] = \
+                self.playdata[self._playIdx.value:self._playIdx.value + playframes, :]
+            outdata[:, self.outputs] = playdata
+            self._playIdx.value += playframes
+            if playframes < frames:
+                self.finished.set()
+
+        # finishing section
+        if self._has_monitor.is_set():
+            self.monitorQ.put_nowait([recdata, playdata])
+        if status:
+            self._statuses.append(status)
+        self._callback_safe.set()
         return
 
 

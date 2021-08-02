@@ -7,14 +7,14 @@ from typing import List
 from numpy import ndarray
 from multiprocessing import Event, Queue
 from realtimesound._streamer import _Player, _Recorder,\
-    _PlaybackRecorder, _Streamer
+    _PlaybackRecorder, _ContinuousStreamer
 from realtimesound.monitor import Monitor,\
     MonitorThread, MonitorProcess
 import atexit
 
 
 _monitor = MonitorThread(1, 0, 0, 0, 0, 0)  # placeholder
-_streamer = _Streamer((0, 0), 0, [0], [0], 0, 0)  # placeholder
+_streamer = _ContinuousStreamer(0, (0, 0), 0, [0], [0], 0, 0)  # placeholder
 
 
 class Device(object):
@@ -74,6 +74,8 @@ class Device(object):
         self._extern_monitor = Event()
         self._running = Event()
         self._monitorQ = Queue()
+        self._online = Event()
+        self._playQ = Queue()
         return
 
     @property
@@ -88,11 +90,12 @@ class Device(object):
 
     @samplerate.setter
     def samplerate(self, fs):
-        check_input_settings(self.id['input'], self.inputs[-1] + 1,
-                             'float32', None, fs)
-        check_output_settings(self.id['output'], self.outputs[-1] + 1,
-                              'float32', None, fs)
-        self._samplerate = int(fs)
+        if not self._online.is_set():
+            check_input_settings(self.id['input'], self.inputs[-1] + 1,
+                                 'float32', None, fs)
+            check_output_settings(self.id['output'], self.outputs[-1] + 1,
+                                  'float32', None, fs)
+            self._samplerate = int(fs)
         return
 
     @property
@@ -102,15 +105,16 @@ class Device(object):
 
     @inputs.setter
     def inputs(self, mapping: List[int]):
-        if (len(mapping) > self.maxInputs
-                or max(mapping) >= self.maxInputs):
-            raise ValueError("Too many channels or unavailable channel number.")
-        mapping.sort()
-        check_input_settings(self.id['input'], mapping[-1] + 1,
-                             'float32', None, self.samplerate)
-        self._inputs.clear()
-        self._inputs.extend(mapping)
-        self._inputs.sort()
+        if not self._online.is_set():
+            if (len(mapping) > self.maxInputs
+                    or max(mapping) >= self.maxInputs):
+                raise ValueError("Too many channels or unavailable channel number.")
+            mapping.sort()
+            check_input_settings(self.id['input'], mapping[-1] + 1,
+                                 'float32', None, self.samplerate)
+            self._inputs.clear()
+            self._inputs.extend(mapping)
+            self._inputs.sort()
         return
 
     @property
@@ -120,15 +124,16 @@ class Device(object):
 
     @outputs.setter
     def outputs(self, mapping: List[int]):
-        if (len(mapping) > self.maxOutputs
-                or max(mapping) >= self.maxOutputs):
-            raise ValueError("Too many channels or unavailable channel number.")
-        mapping.sort()
-        check_output_settings(self.id['output'], mapping[-1] + 1,
-                              'float32', None, self.samplerate)
-        self._outputs.clear()
-        self._outputs.extend(mapping)
-        self._outputs.sort()
+        if not self._online.is_set():
+            if (len(mapping) > self.maxOutputs
+                    or max(mapping) >= self.maxOutputs):
+                raise ValueError("Too many channels or unavailable channel number.")
+            mapping.sort()
+            check_output_settings(self.id['output'], mapping[-1] + 1,
+                                  'float32', None, self.samplerate)
+            self._outputs.clear()
+            self._outputs.extend(mapping)
+            self._outputs.sort()
         return
 
     @property
@@ -205,13 +210,14 @@ class Device(object):
         None.
 
         """
-        self._has_monitor.clear()
-        self._extern_monitor.clear()
-        if MonitorSub is not None and issubclass(MonitorSub, Monitor):
-            self._has_monitor.set()
-        self._MonitorSub = MonitorSub
-        self._MonitorArgs = args
-        self._MonitorKWargs = kwargs
+        if not self._online.is_set():
+            self._has_monitor.clear()
+            self._extern_monitor.clear()
+            if MonitorSub is not None and issubclass(MonitorSub, Monitor):
+                self._has_monitor.set()
+            self._MonitorSub = MonitorSub
+            self._MonitorArgs = args
+            self._MonitorKWargs = kwargs
         return
 
     def use_extern_monitor(self) -> (Queue, Event):
@@ -256,12 +262,17 @@ class Device(object):
         None.
 
         """
-        _streamer_cleanup()
-        _streamer = _setup_streamer(_Player, self, data, block)
-        if self._has_monitor.is_set() and not self._extern_monitor.is_set():
-            _monitor_cleanup()
-            _start_monitor(self, self.channels[1])
-        _streamer.start_streaming()
+        global _streamer
+        if self._online.is_set():
+            block = False
+            self._playQ.put(data)
+        else:
+            _streamer_cleanup()
+            _streamer = _setup_streamer(_Player, self, data, block)
+            if self._has_monitor.is_set() and not self._extern_monitor.is_set():
+                _monitor_cleanup()
+                _start_monitor(self, self.channels[1])
+            _streamer.start_streaming()
         return
 
     def record(self, tlen: float, *, block: bool = True) -> ndarray:
@@ -282,12 +293,17 @@ class Device(object):
             Recorded data.
 
         """
-        _streamer_cleanup()
-        _streamer = _setup_streamer(_Recorder, self, tlen, block)
-        if self._has_monitor.is_set() and not self._extern_monitor.is_set():
-            _monitor_cleanup()
-            _start_monitor(self, self.channels[0])
-        _streamer.start_streaming()
+        global _streamer
+        if self._online.is_set():
+            block = False
+            _streamer._new_recdata(tlen)
+        else:
+            _streamer_cleanup()
+            _streamer = _setup_streamer(_Recorder, self, tlen, block)
+            if self._has_monitor.is_set() and not self._extern_monitor.is_set():
+                _monitor_cleanup()
+                _start_monitor(self, self.channels[0])
+            _streamer.start_streaming()
         return _streamer._buffer.copy() if block else _streamer._buffer
 
     def playrec(self, data: ndarray, *, block: bool = True) -> ndarray:
@@ -308,13 +324,40 @@ class Device(object):
             Recorded data.
 
         """
+        global _streamer
+        if self._online.is_set():
+            block = False
+            self._playQ.put(data)
+            _streamer._new_recdata(data.shape[0]/self.samplerate)
+            # do online stuff
+        else:
+            _streamer_cleanup()
+            _streamer = _setup_streamer(_PlaybackRecorder, self, data, block)
+            if self._has_monitor.is_set() and not self._extern_monitor.is_set():
+                _monitor_cleanup()
+                _start_monitor(self, self.channels)
+            _streamer.start_streaming()
+        return _streamer._buffer.copy() if block else _streamer._buffer
+
+    def turn_on(self):
+        """Turn on the continuous streaming mode."""
+        global _streamer
+        self._online.set()
         _streamer_cleanup()
-        _streamer = _setup_streamer(_PlaybackRecorder, self, data, block)
+        _streamer = _setup_streamer(_ContinuousStreamer, self,
+                                    self._playQ, False)
         if self._has_monitor.is_set() and not self._extern_monitor.is_set():
             _monitor_cleanup()
             _start_monitor(self, self.channels)
         _streamer.start_streaming()
-        return _streamer._buffer.copy() if block else _streamer._buffer
+        pass
+
+    def turn_off(self):
+        """Turn off the continuous streaming mode."""
+        global _streamer
+        _streamer.running.clear()
+        self._online.clear()
+        return
 
 
 def _start_monitor(dev, channels):

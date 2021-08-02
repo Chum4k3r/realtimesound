@@ -23,7 +23,7 @@ class _MemoryBuffer(Thread):
         self.running.wait(5.)
         while True:
             try:
-                data, = self.q.get(1.)
+                data, = self.q.get(2.)
                 shift = len(data)
                 self.buffer[self.idx:self.idx + shift] = data
                 self.idx += shift
