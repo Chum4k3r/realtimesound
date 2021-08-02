@@ -20,12 +20,37 @@ _streamer = _Streamer((0, 0), 0, [0], [0], 0, 0)  # placeholder
 class Device(object):
     """Audio device object abstraction."""
 
-    def __init__(self, hostapi: object,
+    def __init__(self, host: object,
                  id: IOPair,
                  device_data: IOPair,
                  samplerate: int = None,
                  inputs: List[int] = None,
                  outputs: List[int] = None):
+        """
+        Provide functionality to playback and record audio data.
+
+        Parameters
+        ----------
+        hostapi : object
+            The Host object.
+        id : IOPair
+            Input and output device id on Host.
+        device_data : IOPair
+            Input and output device description as dicts.
+        samplerate : int, optional
+            Amount of samples per second. The default is None.
+        inputs : List[int], optional
+            List of active input channels. If None, activate all.
+            The default is None.
+        outputs : List[int], optional
+            List of active output channels. If None, activate all.
+            The default is None.
+
+        Returns
+        -------
+        None.
+
+        """
         if samplerate is None:
             samplerate = max(device_data['input']['default_samplerate'],
                              device_data['output']['default_samplerate'])
@@ -40,7 +65,7 @@ class Device(object):
 
         super().__init__()
         self._id = id
-        self._hostapi = hostapi
+        self._host = host
         self._data = device_data
         self._samplerate = samplerate
         self._inputs = inputs
@@ -53,12 +78,12 @@ class Device(object):
 
     @property
     def id(self) -> IOPair:
-        """Device input and output IDs."""
+        """Device input and output unique IDs on system."""
         return self._id
 
     @property
     def samplerate(self) -> int:
-        """Device sampling rate."""
+        """Amount of samples per second."""
         return self._samplerate
 
     @samplerate.setter
@@ -124,7 +149,7 @@ class Device(object):
     @property
     def host(self):
         """Device's host object."""
-        return self._hostapi
+        return self._host
 
     @property
     def maxInputs(self):
