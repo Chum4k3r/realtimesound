@@ -11,7 +11,7 @@ own monitors.
 
 """
 
-from realtimesound.monitor import Monitor
+from realtimesound.monitor import MonitorProcess
 from typing import List
 from numpy import ndarray, seterr, random, log10, arange
 from matplotlib import use
@@ -19,7 +19,7 @@ use("qt5agg")
 from matplotlib import pyplot as plt
 
 
-class PlotMonitor(Monitor):
+class PlotMonitor(MonitorProcess):
     """Class for monitoring audio streams using `matplotlib` graphics."""
 
     def __init__(self, FPS: int = 30, winsize: int or float = 1/8, *args, **kwargs):
@@ -34,6 +34,10 @@ class PlotMonitor(Monitor):
             Total number of channels.
         interval : float
             The time interval in which the callback should be called.
+
+        See Also
+        --------
+        `Monitor`
 
         """
         super().__init__(FPS, winsize, *args, **kwargs)

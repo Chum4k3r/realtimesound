@@ -6,13 +6,13 @@ from sounddevice import Stream, OutputStream,\
     check_input_settings, check_output_settings
 from typing import List
 from numpy import ndarray
-from multiprocessing import Event
-from realtimesound._streamer import _Streamer
-from realtimesound.monitor import Monitor
+from multiprocessing import Event, Queue
+from realtimesound._streamer import _Player, _Recorder, _PlaybackRecorder, _Streamer
+from realtimesound.monitor import Monitor, MonitorThread, MonitorProcess
 import atexit
 
 
-_monitor = Monitor(1, 0, 0, 0, 0, 0)  # placeholder
+_monitor = MonitorThread(1, 0, 0, 0, 0, 0)  # placeholder
 _streamer = _Streamer((0, 0), 0, [0], [0], 0, 0)  # placeholder
 
 
@@ -45,6 +45,8 @@ class Device(object):
         self._inputs = inputs
         self._outputs = outputs
         self._has_monitor = Event()
+        self._running = Event()
+        self._monitorQ = Queue()
         return
 
     @property
@@ -203,13 +205,11 @@ class Device(object):
 
         """
         _streamer_cleanup()
-        _streamer = _setup_streamer(self, block)
+        _streamer = _setup_streamer(_Player, self, data, block)
         if self._has_monitor.is_set():
             _monitor_cleanup()
-            _start_monitor(self._MonitorSub, self._MonitorArgs,
-                           self._MonitorKWargs, self.samplerate, self.channels[1],
-                           _streamer.running, _streamer.monitorQ)
-        _streamer._start_stream(OutputStream, data)
+            _start_monitor(self, self.channels[1])
+        _streamer.start_streaming()
         return
 
     def record(self, tlen: float, *,
@@ -232,13 +232,11 @@ class Device(object):
 
         """
         _streamer_cleanup()
-        _streamer = _setup_streamer(self, block)
+        _streamer = _setup_streamer(_Recorder, self, tlen, block)
         if self._has_monitor.is_set():
             _monitor_cleanup()
-            _start_monitor(self._MonitorSub, self._MonitorArgs,
-                           self._MonitorKWargs, self.samplerate, self.channels[0],
-                           _streamer.running, _streamer.monitorQ)
-        _streamer._start_stream(InputStream, tlen)
+            _start_monitor(self, self.channels[0])
+        _streamer.start_streaming()
         return _streamer._buffer.copy() if block else _streamer._buffer
 
     def playrec(self, data: ndarray, *,
@@ -261,25 +259,22 @@ class Device(object):
 
         """
         _streamer_cleanup()
-        _streamer = _setup_streamer(self, block)
+        _streamer = _setup_streamer(_PlaybackRecorder, self, data, block)
         if self._has_monitor.is_set():
             _monitor_cleanup()
-            _start_monitor(self._MonitorSub, self._MonitorArgs,
-                           self._MonitorKWargs, self.samplerate, self.channels,
-                           _streamer.running, _streamer.monitorQ)
-        _streamer._start_stream(Stream, data)
+            _start_monitor(self, self.channels)
+        _streamer.start_streaming()
         return _streamer._buffer.copy() if block else _streamer._buffer
 
 
-def _start_monitor(MonitorSub, MonitorInitArgs, MonitorInitKWargs,
-                   samplerate, channels, running, Q):
+def _start_monitor(dev, channels):
     global _monitor
-    _monitor = MonitorSub(*MonitorInitArgs,
-                          **MonitorInitKWargs,
-                          samplerate=samplerate,
-                          numChannels=channels,
-                          running=running,
-                          q=Q)
+    _monitor = dev._MonitorSub(*dev._MonitorArgs,
+                               **dev._MonitorKWargs,
+                               samplerate=dev.samplerate,
+                               numChannels=channels,
+                               running=dev._running,
+                               q=dev._monitorQ)
     _monitor.start()
     return
 
@@ -290,17 +285,20 @@ def _monitor_cleanup():
         while not _monitor.q.empty():
             _ = _monitor.q.get_nowait()
         _monitor.join(timeout=5.)
-    _monitor.close()
+    if issubclass(type(_monitor), MonitorProcess):
+        _monitor.close()
     return
 
 
 atexit.register(_monitor_cleanup)
 
 
-def _setup_streamer(dev, block: bool):
+def _setup_streamer(streamerType, dev, data, block: bool):
     global _streamer
-    _streamer = _Streamer(dev.id, dev.samplerate, dev.inputs,
-                          dev.outputs, block=block, _has_monitor=dev._has_monitor)
+    _streamer = streamerType(data, dev.id, dev.samplerate, dev.inputs,
+                             dev.outputs, 256, block=block,
+                             running=dev._running, monitorQ=dev._monitorQ,
+                             _has_monitor=dev._has_monitor)
     return _streamer
 
 
@@ -311,7 +309,10 @@ def _streamer_cleanup():
             _ = _streamer.monitorQ.get_nowait()
         while not _streamer.bufferQ.empty():
             _ = _streamer.monitorQ.get_nowait()
+    try:
         _streamer.join(timeout=_streamer.durationSamples/_streamer.samplerate)
+    except AttributeError:  # uninitialized streamer
+        pass
     _streamer.close()
     return
 

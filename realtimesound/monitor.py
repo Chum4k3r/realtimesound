@@ -2,13 +2,14 @@
 """Monitor abstract base definition."""
 
 from multiprocessing import Queue, Event, Process
+from threading import Thread
 from queue import Empty
 from numpy import zeros, roll, ndarray
 from typing import List
 from time import time, sleep
 
 
-class Monitor(Process):
+class Monitor(object):
     """Base class for audio stream monitoring."""
 
     def __init__(self, FPS: int, winsize: int or float,
@@ -38,7 +39,7 @@ class Monitor(Process):
             The time interval in which the callback should be called.
 
         """
-        super().__init__(None)
+        # super().__init__(None)
         self.running = running
         self.q = q
         self.FPS = FPS
@@ -52,47 +53,6 @@ class Monitor(Process):
         self.data = []
         for io in range(len(numChannels)):
             self.data.append(zeros((self.numSamples, self.numChannels[io])))
-        return
-
-    def run(self):
-        """
-        Overriden process `run` method.
-
-        `setup` the monitor and wait for stream `running` flag to be set.
-        Loop over the queue to retrieve data from audio stream and call
-        `process_data` to feed the up to date data for visualization.
-        After stream stops, run untill queue is empty and call `tear_down` to
-        release memory allocated on setup.
-
-        Returns
-        -------
-        None.
-
-        """
-        self.setup()
-        self.running.wait()
-        last = time()
-        while True:
-            elapsed = time() - last
-            if elapsed < self.interval:
-                sleep(self.interval - elapsed)
-            frameCount = 0
-            while True:
-                try:
-                    data = self.q.get(timeout=self.interval)
-                except Empty:
-                    break
-                for io in range(len(self.numChannels)):
-                    shift = len(data[io])
-                    self.data[io] = roll(self.data[io], -shift, axis=0)
-                    self.data[io][-shift:, :] = data[io]
-                frameCount += shift
-                if frameCount >= self.numSamples:
-                    break
-            self.process_data(self.data)
-            if frameCount == 0 and not self.running.is_set():
-                break
-        self.tear_down()
         return
 
     def register_queue(self, q: Queue):
@@ -148,3 +108,103 @@ class Monitor(Process):
 
         """
         pass
+
+
+class MonitorProcess(Process, Monitor):
+    """Monitor process implementation."""
+
+    def __init__(self, *args, **kwargs):
+        Process.__init__(self, None)
+        Monitor.__init__(self, *args, **kwargs)
+        return
+
+    def run(self):
+        """
+        Overriden process `run` method.
+
+        `setup` the monitor and wait for stream `running` flag to be set.
+        Loop over the queue to retrieve data from audio stream and call
+        `process_data` to feed the up to date data for visualization.
+        After stream stops, run untill queue is empty and call `tear_down` to
+        release memory allocated on setup.
+
+        Returns
+        -------
+        None.
+
+        """
+        self.setup()
+        self.running.wait()
+        last = time()
+        while True:
+            elapsed = time() - last
+            if elapsed < self.interval:
+                sleep(self.interval - elapsed)
+            frameCount = 0
+            while True:
+                try:
+                    data = self.q.get(timeout=self.interval)
+                except Empty:
+                    break
+                for io in range(len(self.numChannels)):
+                    shift = len(data[io])
+                    self.data[io] = roll(self.data[io], -shift, axis=0)
+                    self.data[io][-shift:, :] = data[io]
+                frameCount += shift
+                if frameCount >= self.numSamples:
+                    break
+            self.process_data(self.data)
+            if frameCount == 0 and not self.running.is_set():
+                break
+        self.tear_down()
+        return
+
+
+class MonitorThread(Thread, Monitor):
+    """Monitor thread implementation."""
+
+    def __init__(self, *args, **kwargs):
+        Thread.__init__(self, None)
+        Monitor.__init__(self, *args, **kwargs)
+        return
+
+    def run(self):
+        """
+        Overriden process `run` method.
+
+        `setup` the monitor and wait for stream `running` flag to be set.
+        Loop over the queue to retrieve data from audio stream and call
+        `process_data` to feed the up to date data for visualization.
+        After stream stops, run untill queue is empty and call `tear_down` to
+        release memory allocated on setup.
+
+        Returns
+        -------
+        None.
+
+        """
+        self.setup()
+        self.running.wait()
+        last = time()
+        while True:
+            elapsed = time() - last
+            if elapsed < self.interval:
+                sleep(self.interval - elapsed)
+            frameCount = 0
+            while True:
+                try:
+                    data = self.q.get(timeout=self.interval)
+                except Empty:
+                    break
+                for io in range(len(self.numChannels)):
+                    shift = len(data[io])
+                    self.data[io] = roll(self.data[io], -shift, axis=0)
+                    self.data[io][-shift:, :] = data[io]
+                frameCount += shift
+                if frameCount >= self.numSamples:
+                    break
+            self.process_data(self.data)
+            if frameCount == 0 and not self.running.is_set():
+                break
+        self.tear_down()
+        return

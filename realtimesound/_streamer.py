@@ -18,26 +18,29 @@ class _Streamer(Process):
 
     def __init__(self, device: _InputOutputPair,
                  samplerate: int,
-                 inputMap: List[int],
-                 outputMap: List[int],
+                 inputs: List[int],
+                 outputs: List[int],
                  blocksize: int = 256,
                  block: bool = True,
+                 running: Event = None,
+                 monitorQ: Queue = None,
                  _has_monitor: Event = None):
         super().__init__(None)
         self.samplerate = samplerate
         self.blocksize = blocksize
         self.device = device
-        self.inputs = list(inputMap)
+        self.inputs = list(inputs)
         self.inputs.sort()
-        self.outputs = list(outputMap)
+        self.outputs = list(outputs)
         self.outputs.sort()
         self._statuses: List[str] = []
         self.bufferQ = Queue()
-        self.monitorQ = Queue()
+        self.monitorQ = monitorQ
         self.finished = Event()
-        self.running = Event()
+        self.running = running
         self.block = block
         self._has_monitor = _has_monitor
+        self.idx = 0
         return
 
     @property
@@ -53,59 +56,11 @@ class _Streamer(Process):
             self.finished.wait()
         return
 
-    def _start_stream(self, streamType: Type[Stream],
-                      data: ndarray or float):
-        self.idx = 0
-        self.finished.clear()
-        if streamType == OutputStream:
-            # play call
-            self.durationSamples = data.shape[0]
-            self.playdata = data.copy()
-            self._streamNumChannels = self.outputs[-1] + 1
-            self._callback = self._play_callback
-        elif streamType == InputStream:
-            # record call
-            self.durationSamples = round(self.samplerate * data + 0.5)
-            self._buffer = zeros((self.durationSamples,
-                                  self.channels[0]), dtype='float32')
-            self._streamNumChannels = self.inputs[-1] + 1
-            self._callback = self._rec_callback
-            _start_buffer(self._buffer, self.bufferQ, self.running)
-        elif streamType == Stream:
-            # playrec call
-            self.durationSamples = data.shape[0]
-            self.playdata = data.copy()
-            self._buffer = zeros((self.durationSamples,
-                                  self.channels[0]), dtype='float32')
-            self._streamNumChannels = [self.inputs[-1] + 1,
-                                       self.outputs[-1] + 1]
-            self._callback = self._playrec_callback
-            _start_buffer(self._buffer, self.bufferQ, self.running)
-        self._streamType = streamType
+    def start_streaming(self):
         self.start()
         self.running.wait()
         if self.block:
             self.finished.wait()
-        return
-
-    def _play_callback(self, outdata, frames, time, status):
-        playframes, playdata = self._process_output_data(outdata, frames)
-        self.idx += playframes
-        self._end_of_callback(playframes, frames, status, playdata)
-        return
-
-    def _rec_callback(self, indata, frames, time, status):
-        recframes, recdata = self._process_input_data(indata, frames)
-        self.idx += recframes
-        self._end_of_callback(recframes, frames, status, recdata)
-        return
-
-    def _playrec_callback(self, indata, outdata, frames, time, status):
-        playframes, playdata = self._process_output_data(outdata, frames)
-        recframes, recdata = self._process_input_data(indata, frames)
-        sframes = max(playframes, recframes)
-        self.idx += sframes
-        self._end_of_callback(sframes, frames, status, recdata, playdata)
         return
 
     def _process_output_data(self, outdata, frames) -> int:
@@ -134,6 +89,68 @@ class _Streamer(Process):
     def _finished_streaming(self):
         self.running.clear()
         self.finished.set()
+        return
+
+
+class _Player(_Streamer):
+    """Player class."""
+
+    def __init__(self, data: ndarray, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.durationSamples = data.shape[0]
+        self.playdata = data.copy()
+        self._streamNumChannels = self.outputs[-1] + 1
+        self._streamType = OutputStream
+        return
+
+    def _callback(self, outdata, frames, time, status):
+        playframes, playdata = self._process_output_data(outdata, frames)
+        self.idx += playframes
+        self._end_of_callback(playframes, frames, status, playdata)
+        return
+
+
+class _Recorder(_Streamer):
+    """Recorder class."""
+
+    def __init__(self, tlen: float, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.durationSamples = round(self.samplerate * tlen + 0.5)
+        self._buffer = zeros((self.durationSamples,
+                              self.channels[0]), dtype='float32')
+        self._streamNumChannels = self.inputs[-1] + 1
+        self._streamType = InputStream
+        _start_buffer(self._buffer, self.bufferQ, self.running)
+        return
+
+    def _callback(self, indata, frames, time, status):
+        recframes, recdata = self._process_input_data(indata, frames)
+        self.idx += recframes
+        self._end_of_callback(recframes, frames, status, recdata)
+        return
+
+
+class _PlaybackRecorder(_Streamer):
+    """PlaybackRecorder class."""
+
+    def __init__(self, data: ndarray, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.durationSamples = data.shape[0]
+        self.playdata = data.copy()
+        self._buffer = zeros((self.durationSamples,
+                              self.channels[0]), dtype='float32')
+        self._streamNumChannels = [self.inputs[-1] + 1,
+                                   self.outputs[-1] + 1]
+        self._streamType = Stream
+        _start_buffer(self._buffer, self.bufferQ, self.running)
+        return
+
+    def _callback(self, indata, outdata, frames, time, status):
+        playframes, playdata = self._process_output_data(outdata, frames)
+        recframes, recdata = self._process_input_data(indata, frames)
+        sframes = max(playframes, recframes)
+        self.idx += sframes
+        self._end_of_callback(sframes, frames, status, recdata, playdata)
         return
 
 

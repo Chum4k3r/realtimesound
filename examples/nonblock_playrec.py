@@ -26,7 +26,7 @@ if __name__ == '__main__':
     from multiprocessing import freeze_support
     freeze_support()
 
-    device = rts.default_host().default_device()
+    device = rts.hosts('asio').default_device()
 
     device.plug_monitor(WavePlotMonitor, kwargs={'downsampling': 10,
                                                  'FPS': 48,
