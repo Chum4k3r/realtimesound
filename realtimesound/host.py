@@ -183,13 +183,15 @@ def hosts(idx: int or str = None) -> Host or HostsList:
     """
     if idx is not None:
         if type(idx) == str:
-            if idx.lower() == 'default':
-                idx = _default_host_id
-            else:
-                try:
-                    idx = [i for i, host in enumerate(hosts())
-                           if idx.upper() in host['name'].upper().split(' ')][0]
-                except IndexError:
-                    raise ValueError("Invalid API name.")
+            try:
+                idx = [i for i, host in enumerate(hosts())
+                       if idx.upper() in host['name'].upper().split(' ')][0]
+            except IndexError:
+                raise ValueError("Invalid API name.")
         return Host(idx, query_hostapis(idx))
     return HostsList(query_hostapis())
+
+
+def default_host():
+    """System host."""
+    return Host(_default_host_id, query_hostapis(_default_host_id))
