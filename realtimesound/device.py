@@ -3,7 +3,7 @@
 
 from sounddevice import _InputOutputPair as IOPair,\
     check_input_settings, check_output_settings
-from typing import List
+from typing import List, Union
 from numpy import ndarray
 from multiprocessing import Event, Queue
 from threading import Timer
@@ -221,7 +221,7 @@ class Device(object):
             self._MonitorKWargs = kwargs
         return
 
-    def use_extern_monitor(self) -> (Queue, Event):
+    def use_external_monitor(self) -> Union[Queue, Event]:
         """
         Provide access to monitor queue and the stream running state.
 

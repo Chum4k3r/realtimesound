@@ -6,8 +6,9 @@ Use system default host and device.
 In this example a `Device` instance is created by requesting the default
 input/output (I/O) pair of devices from the default system host API.
 
-An external monitor is created by requesting the monitor queue and the stream
-state flag from the device. This requires that all memory management of the
+An external monitor is created from provided monitor queue and the stream
+state flag from the device.
+This implies that all memory management of the
 monitor is made by user.
 
 An audio sample of 8 seconds is created.
@@ -38,7 +39,7 @@ if __name__ == '__main__':
 
     device = rts.hosts('asio').default_device()
 
-    monitorQ, streamState = device.use_extern_monitor()
+    monitorQ, streamState = device.use_external_monitor()
 
     myMonitor = WavePlotMonitor(downsampling=1, FPS=30,
                                 winsize=0.1,
