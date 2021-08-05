@@ -15,7 +15,7 @@ with open("README.md", "r") as f:
 
 
 settings = {
-    'name': 'Real Time Sound',
+    'name': 'realtimesound',
     'version': '0.1.0a',
     'description': ('Data visualization in real time for '
                     + 'PortAudio streams using multiprocessing.'),
