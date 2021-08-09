@@ -114,7 +114,7 @@ class MonitorProcess(Process, Monitor):
     """Monitor process implementation."""
 
     def __init__(self, *args, **kwargs):
-        Process.__init__(self, None)
+        Process.__init__(self, name='MonitorProcess')
         Monitor.__init__(self, *args, **kwargs)
         return
 
@@ -164,7 +164,7 @@ class MonitorThread(Thread, Monitor):
     """Monitor thread implementation."""
 
     def __init__(self, *args, **kwargs):
-        Thread.__init__(self, None)
+        Thread.__init__(self, name='MonitorThread')
         Monitor.__init__(self, *args, **kwargs)
         return
 

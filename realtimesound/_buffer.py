@@ -11,7 +11,7 @@ class _MemoryBuffer(Thread):
     """Helper class to retrieve input audio data."""
 
     def __init__(self, buffer: ndarray, q: Queue, running: Event):
-        super().__init__(None)
+        super().__init__(name='MemoryBufferThread')
         self.running = running
         self.buffer = buffer
         self.idx = 0
@@ -23,7 +23,7 @@ class _MemoryBuffer(Thread):
         self.running.wait(5.)
         while True:
             try:
-                data, = self.q.get(2.)
+                data, = self.q.get(timeout=2.)
                 shift = len(data)
                 self.buffer[self.idx:self.idx + shift] = data
                 self.idx += shift

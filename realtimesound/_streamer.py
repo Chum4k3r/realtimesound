@@ -12,7 +12,7 @@ from realtimesound._buffer import _MemoryBuffer
 import atexit
 
 
-_buffer = None  # _MemoryBuffer(0, 0, 0)  # placeholder
+_buffer =  _MemoryBuffer(0, 0, 0)  # placeholder
 
 
 class _Streamer(Process):
@@ -27,7 +27,7 @@ class _Streamer(Process):
                  running: Event = None,
                  monitorQ: Queue = None,
                  _has_monitor: Event = None):
-        super().__init__(None)
+        super().__init__(name='StreamerProcess')
         self.samplerate = samplerate
         self.blocksize = blocksize
         self.device = device
@@ -120,7 +120,6 @@ class _Recorder(_Streamer):
         self._buffer = zeros((self.durationSamples,
                               self.channels[0]), dtype='float32')
         _start_buffer(self._buffer, self.bufferQ, self.running)
-        Timer(1.1*tlen, _buffer_cleanup).start()
         return
 
     def run(self):
@@ -152,7 +151,6 @@ class _PlaybackRecorder(_Streamer):
                                    self.outputs[-1] + 1]
         self._streamType = Stream
         _start_buffer(self._buffer, self.bufferQ, self.running)
-        Timer(1.1*(self.durationSamples/self.samplerate), _buffer_cleanup).start()
         return
 
     def run(self):
@@ -215,7 +213,6 @@ class _ContinuousStreamer(_Streamer):
         self._recIdx.value = 0
         self._buffer = zeros((self._recSamples.value, self.channels[0]))
         _start_buffer(self._buffer, self.bufferQ, self._recording)
-        Timer(1.1*tlen, _buffer_cleanup).start()
         self._recording.set()
         return
 
@@ -263,7 +260,7 @@ class _ContinuousStreamer(_Streamer):
 
 def _start_buffer(buffer, Q, running):
     global _buffer
-    _buffer = _MemoryBuffer(buffer, Q, running)
+    _buffer =  _MemoryBuffer(buffer, Q, running)  # placeholder
     _buffer.start()
     return
 
@@ -273,8 +270,8 @@ def _buffer_cleanup():
     if _buffer.is_alive():
         while not _buffer.q.empty():
             _ = _buffer.q.get_nowait()
-    _buffer.join(timeout=5.)
+        _buffer.join(timeout=5.)
     return
 
 
-# atexit.register(_buffer_cleanup)
+atexit.register(_buffer_cleanup)

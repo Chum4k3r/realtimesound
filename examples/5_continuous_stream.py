@@ -37,7 +37,7 @@ if __name__ == '__main__':
                                                  'FPS': 48,
                                                  'winsize': 0.2})
 
-    audio = random.randn(8*device.samplerate, 1)  # 8 seconds random noise
+    audio = random.randn(1*device.samplerate, 1)  # 8 seconds random noise
     audio /= abs(audio).max()  # normalized between [-1, 1]
 
     device.inputs = [0]
@@ -45,11 +45,11 @@ if __name__ == '__main__':
 
     device.turn_on()
 
-    sleep(5.)
+    sleep(1.)
     rec = device.playrec(audio)
-    sleep(10.)
+    sleep(2.)
 
     device.play(rec)
-    sleep(10.)
+    sleep(2.)
 
     device.turn_off()

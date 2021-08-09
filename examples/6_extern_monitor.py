@@ -27,6 +27,8 @@ memory management.
 
 """
 
+import numpy 
+assert numpy
 import realtimesound as rts
 from numpy import random
 from plotmonitor import WavePlotMonitor
@@ -66,5 +68,7 @@ if __name__ == '__main__':
 
     device.turn_off()
 
+    while not myMonitor.q.empty():
+        print(myMonitor.q.get_nowait().shape)
     myMonitor.join(timeout=5.)
     myMonitor.close()
