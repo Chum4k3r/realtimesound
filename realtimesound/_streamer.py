@@ -9,7 +9,6 @@ from sounddevice import Stream, OutputStream,\
 from typing import List
 from numpy import zeros, ndarray
 from realtimesound._buffer import _MemoryBuffer
-import atexit
 
 
 _buffer =  _MemoryBuffer(0, 0, 0)  # placeholder
@@ -83,6 +82,7 @@ class _Streamer(Process):
     def _finished_streaming(self):
         self.running.clear()
         self.finished.set()
+        _buffer_cleanup()
         return
 
 
@@ -272,6 +272,3 @@ def _buffer_cleanup():
             _ = _buffer.q.get_nowait()
         _buffer.join(timeout=5.)
     return
-
-
-atexit.register(_buffer_cleanup)
