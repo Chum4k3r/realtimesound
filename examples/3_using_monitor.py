@@ -35,21 +35,23 @@ if __name__ == '__main__':
 
     device = rts.default_host().default_device()
 
-    device.plug_monitor(WavePlotMonitor, kwargs={'downsampling': 10,
+    ctx = rts.create_context(device)
+
+    ctx.plug_monitor(WavePlotMonitor, kwargs={'downsampling': 10,
                                                  'FPS': 48,
                                                  'winsize': 0.2})
 
-    rec = device.record(6.)
+    rec = ctx.record(6.)
 
-    device.plug_monitor(BarPlotMonitor, kwargs={'FPS': 60,
+    ctx.plug_monitor(BarPlotMonitor, kwargs={'FPS': 60,
                                                 'winsize': 1/8})
 
-    device.play(rec)
+    ctx.play(rec)
 
     audio = random.randn(8*device.samplerate, 1)  # 8 seconds random noise
     audio /= abs(audio).max()  # normalized between [-1, 1]
 
-    recaudio = device.playrec(audio)
+    recaudio = ctx.playrec(audio)
 
-    device.plug_monitor(WavePlotMonitor, kwargs={'downsampling': 10})
-    device.play(recaudio)
+    ctx.plug_monitor(WavePlotMonitor, kwargs={'downsampling': 10})
+    ctx.play(recaudio)

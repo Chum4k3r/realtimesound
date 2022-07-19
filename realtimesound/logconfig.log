@@ -1,0 +1,373 @@
+2021-11-13 03:00:47,530 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 03:00:47,532 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x22e91de1220>
+2021-11-13 03:00:47,533 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x22e91e54b50>
+2021-11-13 03:00:47,534 [MainThread  ] [DEBUG]  rec_buffer=<ListProxy object, typeid 'list' at 0x22e91e542b0>
+2021-11-13 03:54:48,510 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:54:48,511 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:54:48,511 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:54:49,534 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:54:49,534 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:54:49,534 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:54:50,546 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:54:50,546 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:54:50,546 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:54:51,560 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:54:51,560 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:54:51,561 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:54:52,576 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:54:52,577 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:54:52,577 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:54:53,578 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:54:53,579 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:54:53,580 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:54:54,582 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:54:54,582 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:54:54,582 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:54:55,586 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:54:55,586 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:54:55,586 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:54:56,588 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:54:56,588 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:54:56,589 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:54:57,604 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:54:57,605 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:54:57,606 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:55:25,260 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:55:25,260 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:55:25,261 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:55:26,277 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:55:26,277 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:55:26,278 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:55:27,278 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:55:27,279 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:55:27,279 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:55:28,293 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:55:28,293 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:55:28,293 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:55:29,297 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:55:29,297 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:55:29,297 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:55:30,299 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:55:30,299 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:55:30,299 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:55:31,300 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:55:31,300 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:55:31,300 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:55:32,304 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:55:32,304 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:55:32,304 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:55:33,315 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:55:33,316 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:55:33,317 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:55:34,330 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:55:34,331 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:55:34,332 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:56:03,872 [MainThread  ] [INFO ]  collatz(sampling_rate())=24000
+2021-11-13 03:56:04,104 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:56:04,104 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:56:04,105 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:56:04,230 [MainThread  ] [INFO ]  collatz(sampling_rate())=12000
+2021-11-13 03:56:04,594 [MainThread  ] [INFO ]  collatz(sampling_rate())=6000
+2021-11-13 03:56:04,958 [MainThread  ] [INFO ]  collatz(sampling_rate())=3000
+2021-11-13 03:56:05,117 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:56:05,117 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:56:05,117 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:56:05,323 [MainThread  ] [INFO ]  collatz(sampling_rate())=1500
+2021-11-13 03:56:05,683 [MainThread  ] [INFO ]  collatz(sampling_rate())=750
+2021-11-13 03:56:06,044 [MainThread  ] [INFO ]  collatz(sampling_rate())=375
+2021-11-13 03:56:06,123 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:56:06,123 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:56:06,123 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:56:06,409 [MainThread  ] [INFO ]  collatz(sampling_rate())=1126
+2021-11-13 03:56:06,773 [MainThread  ] [INFO ]  collatz(sampling_rate())=563
+2021-11-13 03:56:07,138 [MainThread  ] [INFO ]  sampling_rate()=48000
+)=1690
+2021-11-13 03:56:07,139 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:56:07,139 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:56:07,490 [MainThread  ] [INFO ]  collatz(sampling_rate())=845
+2021-11-13 03:56:07,855 [MainThread  ] [INFO ]  collatz(sampling_rate())=2536
+2021-11-13 03:56:08,141 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:56:08,142 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:56:08,142 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:56:08,205 [MainThread  ] [INFO ]  collatz(sampling_rate())=1268
+2021-11-13 03:56:08,571 [MainThread  ] [INFO ]  collatz(sampling_rate())=634
+2021-11-13 03:56:08,937 [MainThread  ] [INFO ]  collatz(sampling_rate())=317
+2021-11-13 03:56:09,145 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:56:09,146 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:56:09,146 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:56:09,288 [MainThread  ] [INFO ]  collatz(sampling_rate())=952
+2021-11-13 03:56:09,650 [MainThread  ] [INFO ]  collatz(sampling_rate())=476
+2021-11-13 03:56:10,015 [MainThread  ] [INFO ]  collatz(sampling_rate())=238
+2021-11-13 03:56:10,156 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:56:10,156 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:56:10,157 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:56:10,380 [MainThread  ] [INFO ]  collatz(sampling_rate())=119
+2021-11-13 03:56:10,743 [MainThread  ] [INFO ]  collatz(sampling_rate())=358
+2021-11-13 03:56:11,105 [MainThread  ] [INFO ]  collatz(sampling_rate())=179
+2021-11-13 03:56:11,168 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:56:11,168 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:56:11,168 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:56:11,456 [MainThread  ] [INFO ]  collatz(sampling_rate())=538
+2021-11-13 03:56:11,820 [MainThread  ] [INFO ]  collatz(sampling_rate())=269
+2021-11-13 03:56:12,169 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:56:12,170 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:56:12,171 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:56:12,185 [MainThread  ] [INFO ]  collatz(sampling_rate())=808
+2021-11-13 03:56:12,550 [MainThread  ] [INFO ]  collatz(sampling_rate())=404
+2021-11-13 03:56:12,914 [MainThread  ] [INFO ]  collatz(sampling_rate())=202
+2021-11-13 03:56:13,182 [MainThread  ] [INFO ]  sampling_rate()=48000
+2021-11-13 03:56:13,182 [MainThread  ] [INFO ]  blocksize()=32
+2021-11-13 03:56:13,182 [MainThread  ] [INFO ]  num_channels()=2
+2021-11-13 03:56:13,277 [MainThread  ] [INFO ]  collatz(sampling_rate())=101
+2021-11-13 03:56:13,635 [MainThread  ] [INFO ]  collatz(sampling_rate())=304
+2021-11-13 03:56:13,999 [MainThread  ] [INFO ]  collatz(sampling_rate())=152
+2021-11-13 03:56:14,350 [MainThread  ] [INFO ]  collatz(sampling_rate())=76
+2021-11-13 04:00:47,812 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=24000
+2021-11-13 04:00:48,033 [MainThread  ] [INFO ]  config.sampling_rate()=48000
+2021-11-13 04:00:48,034 [MainThread  ] [INFO ]  config.blocksize()=32
+2021-11-13 04:00:48,034 [MainThread  ] [INFO ]  config.num_channels()=2
+2021-11-13 04:00:48,172 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=12000
+2021-11-13 04:00:48,537 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=6000
+2021-11-13 04:00:48,901 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=3000
+2021-11-13 04:00:49,045 [MainThread  ] [INFO ]  config.sampling_rate()=48000
+2021-11-13 04:00:49,045 [MainThread  ] [INFO ]  config.blocksize()=32
+2021-11-13 04:00:49,045 [MainThread  ] [INFO ]  config.num_channels()=2
+2021-11-13 04:00:49,251 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=1500
+2021-11-13 04:00:49,616 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=750
+2021-11-13 04:00:49,981 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=375
+2021-11-13 04:00:50,062 [MainThread  ] [INFO ]  config.sampling_rate()=48000
+2021-11-13 04:00:50,062 [MainThread  ] [INFO ]  config.blocksize()=32
+2021-11-13 04:00:50,062 [MainThread  ] [INFO ]  config.num_channels()=2
+2021-11-13 04:00:50,333 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=1126
+2021-11-13 04:00:50,699 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=563
+2021-11-13 04:00:51,064 [MainThread  ] [INFO ]  config.sampling_rate()=48000
+)=1690
+2021-11-13 04:00:51,067 [MainThread  ] [INFO ]  config.blocksize()=32
+2021-11-13 04:00:51,068 [MainThread  ] [INFO ]  config.num_channels()=2
+2021-11-13 04:00:51,431 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=845
+2021-11-13 04:00:51,796 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=2536
+2021-11-13 04:00:52,083 [MainThread  ] [INFO ]  config.sampling_rate()=48000
+2021-11-13 04:00:52,084 [MainThread  ] [INFO ]  config.blocksize()=32
+2021-11-13 04:00:52,088 [MainThread  ] [INFO ]  config.num_channels()=2
+2021-11-13 04:00:52,161 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=1268
+2021-11-13 04:00:52,511 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=634
+2021-11-13 04:00:52,872 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=317
+2021-11-13 04:00:53,093 [MainThread  ] [INFO ]  config.sampling_rate()=48000
+2021-11-13 04:00:53,094 [MainThread  ] [INFO ]  config.blocksize()=32
+2021-11-13 04:00:53,094 [MainThread  ] [INFO ]  config.num_channels()=2
+2021-11-13 04:00:53,236 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=952
+2021-11-13 04:00:53,588 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=476
+2021-11-13 04:00:53,951 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=238
+2021-11-13 04:00:54,095 [MainThread  ] [INFO ]  config.sampling_rate()=48000
+2021-11-13 04:00:54,095 [MainThread  ] [INFO ]  config.blocksize()=32
+2021-11-13 04:00:54,096 [MainThread  ] [INFO ]  config.num_channels()=2
+2021-11-13 04:00:54,317 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=119
+2021-11-13 04:00:54,683 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=358
+2021-11-13 04:00:55,049 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=179
+2021-11-13 04:00:55,097 [MainThread  ] [INFO ]  config.sampling_rate()=48000
+2021-11-13 04:00:55,097 [MainThread  ] [INFO ]  config.blocksize()=32
+2021-11-13 04:00:55,097 [MainThread  ] [INFO ]  config.num_channels()=2
+2021-11-13 04:00:55,415 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=538
+2021-11-13 04:00:55,781 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=269
+2021-11-13 04:00:56,099 [MainThread  ] [INFO ]  config.sampling_rate()=48000
+2021-11-13 04:00:56,100 [MainThread  ] [INFO ]  config.blocksize()=32
+2021-11-13 04:00:56,101 [MainThread  ] [INFO ]  config.num_channels()=2
+2021-11-13 04:00:56,147 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=808
+2021-11-13 04:00:56,509 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=404
+2021-11-13 04:00:56,872 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=202
+2021-11-13 04:00:57,109 [MainThread  ] [INFO ]  config.sampling_rate()=48000
+2021-11-13 04:00:57,109 [MainThread  ] [INFO ]  config.blocksize()=32
+2021-11-13 04:00:57,110 [MainThread  ] [INFO ]  config.num_channels()=2
+2021-11-13 04:00:57,236 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=101
+2021-11-13 04:00:57,586 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=304
+2021-11-13 04:00:57,948 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=152
+2021-11-13 04:00:58,313 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=76
+2021-11-13 04:06:28,065 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=24000
+2021-11-13 04:06:28,308 [MainThread  ] [INFO ]  self.config.sampling_rate()=48000
+2021-11-13 04:06:28,308 [MainThread  ] [INFO ]  self.config.blocksize()=32
+2021-11-13 04:06:28,308 [MainThread  ] [INFO ]  self.config.num_channels()=2
+2021-11-13 04:06:28,429 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=12000
+2021-11-13 04:06:28,780 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=6000
+2021-11-13 04:06:29,144 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=3000
+2021-11-13 04:06:29,318 [MainThread  ] [INFO ]  self.config.sampling_rate()=48000
+2021-11-13 04:06:29,319 [MainThread  ] [INFO ]  self.config.blocksize()=32
+2021-11-13 04:06:29,319 [MainThread  ] [INFO ]  self.config.num_channels()=2
+2021-11-13 04:06:29,510 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=1500
+2021-11-13 04:06:29,871 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=750
+2021-11-13 04:06:30,235 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=375
+2021-11-13 04:06:30,332 [MainThread  ] [INFO ]  self.config.sampling_rate()=48000
+2021-11-13 04:06:30,332 [MainThread  ] [INFO ]  self.config.blocksize()=32
+2021-11-13 04:06:30,332 [MainThread  ] [INFO ]  self.config.num_channels()=2
+2021-11-13 04:06:30,587 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=1126
+2021-11-13 04:06:30,937 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=563
+2021-11-13 04:06:31,287 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=1690
+2021-11-13 04:06:31,335 [MainThread  ] [INFO ]  self.config.sampling_rate()=48000
+2021-11-13 04:06:31,335 [MainThread  ] [INFO ]  self.config.blocksize()=32
+2021-11-13 04:06:31,335 [MainThread  ] [INFO ]  self.config.num_channels()=2
+2021-11-13 04:06:31,651 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=845
+2021-11-13 04:06:32,012 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=2536
+2021-11-13 04:06:32,346 [MainThread  ] [INFO ]  self.config.sampling_rate()=48000
+2021-11-13 04:06:32,347 [MainThread  ] [INFO ]  self.config.blocksize()=32
+2021-11-13 04:06:32,348 [MainThread  ] [INFO ]  self.config.num_channels()=2
+2021-11-13 04:06:32,377 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=1268
+2021-11-13 04:06:32,742 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=634
+2021-11-13 04:06:33,105 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=317
+2021-11-13 04:06:33,360 [MainThread  ] [INFO ]  self.config.sampling_rate()=48000
+2021-11-13 04:06:33,361 [MainThread  ] [INFO ]  self.config.blocksize()=32
+2021-11-13 04:06:33,362 [MainThread  ] [INFO ]  self.config.num_channels()=2
+2021-11-13 04:06:33,471 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=952
+2021-11-13 04:06:33,821 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=476
+2021-11-13 04:06:34,182 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=238
+2021-11-13 04:06:34,370 [MainThread  ] [INFO ]  self.config.sampling_rate()=48000
+2021-11-13 04:06:34,371 [MainThread  ] [INFO ]  self.config.blocksize()=32
+2021-11-13 04:06:34,371 [MainThread  ] [INFO ]  self.config.num_channels()=2
+2021-11-13 04:06:34,542 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=119
+2021-11-13 04:06:34,905 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=358
+2021-11-13 04:06:35,257 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=179
+2021-11-13 04:06:35,384 [MainThread  ] [INFO ]  self.config.sampling_rate()=48000
+2021-11-13 04:06:35,384 [MainThread  ] [INFO ]  self.config.blocksize()=32
+2021-11-13 04:06:35,385 [MainThread  ] [INFO ]  self.config.num_channels()=2
+2021-11-13 04:06:35,620 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=538
+2021-11-13 04:06:35,971 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=269
+2021-11-13 04:06:36,336 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=808
+2021-11-13 04:06:36,399 [MainThread  ] [INFO ]  self.config.sampling_rate()=48000
+2021-11-13 04:06:36,399 [MainThread  ] [INFO ]  self.config.blocksize()=32
+2021-11-13 04:06:36,400 [MainThread  ] [INFO ]  self.config.num_channels()=2
+2021-11-13 04:06:36,700 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=404
+2021-11-13 04:06:37,066 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=202
+2021-11-13 04:06:37,401 [MainThread  ] [INFO ]  self.config.sampling_rate()=48000
+2021-11-13 04:06:37,402 [MainThread  ] [INFO ]  self.config.blocksize()=32
+2021-11-13 04:06:37,402 [MainThread  ] [INFO ]  self.config.num_channels()=2
+2021-11-13 04:06:37,416 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=101
+2021-11-13 04:06:37,779 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=304
+2021-11-13 04:06:38,145 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=152
+2021-11-13 04:06:38,510 [MainThread  ] [INFO ]  collatz(config.sampling_rate())=76
+2021-11-13 19:20:18,717 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:20:18,757 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x1613c761250>
+2021-11-13 19:20:18,757 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x1613dca6070>
+2021-11-13 19:20:18,758 [MainThread  ] [DEBUG]  rec_buffer=<ListProxy object, typeid 'list' at 0x1613dca60a0>
+2021-11-13 19:20:55,209 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:20:55,210 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x23af04a1250>
+2021-11-13 19:20:55,211 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x23af19f6070>
+2021-11-13 19:20:55,211 [MainThread  ] [DEBUG]  rec_buffer=<ListProxy object, typeid 'list' at 0x23af19f60a0>
+2021-11-13 19:20:55,212 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:20:55,212 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x23af04a1250>
+2021-11-13 19:20:55,213 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x23af19f6070>
+2021-11-13 19:20:55,214 [MainThread  ] [DEBUG]  Starting main func
+2021-11-13 19:20:55,216 [MainThread  ] [DEBUG]  Started source thread
+2021-11-13 19:20:55,217 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-13 19:20:55,218 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-13 19:20:55,219 [MainThread  ] [DEBUG]  Started sink thread
+2021-11-13 19:20:55,220 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-13 19:20:55,220 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-13 19:20:55,265 [rtsSinkThrea] [DEBUG]  Starting rtsSinkThread loop
+2021-11-13 19:23:50,677 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:23:50,678 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x2c9f9d62220>
+2021-11-13 19:23:50,679 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x2c9fb2880d0>
+2021-11-13 19:23:50,679 [MainThread  ] [DEBUG]  rec_buffer=<ListProxy object, typeid 'list' at 0x2c9fb2880a0>
+2021-11-13 19:23:50,680 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:23:50,681 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x2c9f9d62220>
+2021-11-13 19:23:50,681 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x2c9fb2880d0>
+2021-11-13 19:23:50,682 [MainThread  ] [DEBUG]  Starting main func
+2021-11-13 19:23:50,684 [MainThread  ] [DEBUG]  Started source thread
+2021-11-13 19:23:50,686 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-13 19:23:50,687 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-13 19:23:50,688 [MainThread  ] [DEBUG]  Started sink thread
+2021-11-13 19:23:50,689 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-13 19:23:50,690 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-13 19:23:50,695 [rtsSinkThrea] [DEBUG]  Starting rtsSinkThread loop
+2021-11-13 19:24:12,608 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:24:12,610 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x2361ba91220>
+2021-11-13 19:24:12,610 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x2361cff70a0>
+2021-11-13 19:24:12,611 [MainThread  ] [DEBUG]  rec_buffer=<ListProxy object, typeid 'list' at 0x2361cff70d0>
+2021-11-13 19:24:12,611 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:24:12,612 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x2361ba91220>
+2021-11-13 19:24:12,612 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x2361cff70a0>
+2021-11-13 19:24:12,613 [MainThread  ] [DEBUG]  Starting main func
+2021-11-13 19:24:12,615 [MainThread  ] [DEBUG]  Started source thread
+2021-11-13 19:24:12,615 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-13 19:24:12,616 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-13 19:24:12,616 [MainThread  ] [DEBUG]  Started sink thread
+2021-11-13 19:24:12,617 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-13 19:24:12,617 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-13 19:24:12,621 [rtsSinkThrea] [DEBUG]  Starting rtsSinkThread loop
+2021-11-13 19:25:24,825 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:25:24,828 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x1fc81e21220>
+2021-11-13 19:25:24,828 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x1fc833472b0>
+2021-11-13 19:25:24,829 [MainThread  ] [DEBUG]  rec_buffer=<ListProxy object, typeid 'list' at 0x1fc83347280>
+2021-11-13 19:25:24,830 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:25:24,831 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x1fc81e21220>
+2021-11-13 19:25:24,831 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x1fc833472b0>
+2021-11-13 19:25:24,832 [MainThread  ] [DEBUG]  Starting main func
+2021-11-13 19:25:24,835 [MainThread  ] [DEBUG]  Started source thread
+2021-11-13 19:25:24,837 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-13 19:25:24,838 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-13 19:25:24,839 [MainThread  ] [DEBUG]  Started sink thread
+2021-11-13 19:25:24,840 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-13 19:25:24,841 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-13 19:25:24,852 [rtsSinkThrea] [DEBUG]  Starting rtsSinkThread loop
+2021-11-13 19:25:24,854 [rtsSinkThrea] [DEBUG]  Starting rtsSinkThread loop
+2021-11-13 19:26:10,234 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:26:10,236 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x2163d380250>
+2021-11-13 19:26:10,236 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x2163e8e5160>
+2021-11-13 19:26:10,237 [MainThread  ] [DEBUG]  rec_buffer=<ListProxy object, typeid 'list' at 0x2163e8e5310>
+2021-11-13 19:26:10,238 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:26:10,239 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x2163d380250>
+2021-11-13 19:26:10,239 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x2163e8e5160>
+2021-11-13 19:26:10,240 [MainThread  ] [DEBUG]  Starting main func
+2021-11-13 19:26:10,243 [MainThread  ] [DEBUG]  Started source thread
+2021-11-13 19:26:10,244 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-13 19:26:10,244 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-13 19:26:10,246 [MainThread  ] [DEBUG]  Started sink thread
+2021-11-13 19:26:10,246 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-13 19:26:10,247 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-13 19:26:10,252 [rtsSinkThrea] [DEBUG]  Starting rtsSinkThread loop
+2021-11-13 19:26:10,259 [rtsSinkThrea] [DEBUG]  Starting rtsSinkThread loop
+2021-11-13 19:28:29,261 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:28:29,279 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x13383e3b220>
+2021-11-13 19:28:29,280 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x13383e2f2b0>
+2021-11-13 19:28:29,280 [MainThread  ] [DEBUG]  rec_buffer=<ListProxy object, typeid 'list' at 0x13383e3b640>
+2021-11-13 19:28:29,281 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-13 19:28:29,282 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x13383e3b220>
+2021-11-13 19:28:29,282 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x13383e2f2b0>
+2021-11-13 19:28:29,283 [MainThread  ] [DEBUG]  Starting main func
+2021-11-13 19:28:29,284 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-13 19:28:29,285 [MainThread  ] [DEBUG]  Started source thread
+2021-11-13 19:28:29,285 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-13 19:28:29,286 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-13 19:28:29,287 [MainThread  ] [DEBUG]  Started sink thread
+2021-11-13 19:28:29,288 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-13 19:28:29,292 [rtsSinkThrea] [DEBUG]  Starting rtsSinkThread loop
+2021-11-13 19:28:29,292 [rtsSinkThrea] [DEBUG]  Starting rtsSinkThread loop
+2021-11-14 23:17:33,087 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-14 23:17:33,090 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x1f0713d1250>
+2021-11-14 23:17:33,090 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x1f0728f8250>
+2021-11-14 23:17:33,091 [MainThread  ] [DEBUG]  rec_buffer=<ListProxy object, typeid 'list' at 0x1f0728f8220>
+2021-11-14 23:17:33,091 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2021-11-14 23:17:33,092 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x1f0713d1250>
+2021-11-14 23:17:33,092 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x1f0728f8250>
+2021-11-14 23:17:33,093 [MainThread  ] [DEBUG]  Starting main func
+2021-11-14 23:17:33,096 [MainThread  ] [DEBUG]  Started source thread
+2021-11-14 23:17:33,098 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-14 23:17:33,099 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-14 23:17:33,100 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2021-11-14 23:17:33,100 [MainThread  ] [DEBUG]  Started sink thread
+2021-11-14 23:17:33,101 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2021-11-14 23:17:33,109 [rtsSinkThrea] [DEBUG]  Starting rtsSinkThread loop
+2021-11-14 23:17:33,109 [rtsSinkThrea] [DEBUG]  Starting rtsSinkThread loop
+2022-07-07 20:24:16,893 [MainThread  ] [INFO ]  Initializing rtsSinkThread
+2022-07-07 20:24:16,894 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x217947e7100>
+2022-07-07 20:24:16,894 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x21795d85220>
+2022-07-07 20:24:16,894 [MainThread  ] [DEBUG]  rec_buffer=<ListProxy object, typeid 'list' at 0x21795d85250>
+2022-07-07 20:24:16,895 [MainThread  ] [INFO ]  Initializing rtsSourceThread
+2022-07-07 20:24:16,895 [MainThread  ] [DEBUG]  running=<EventProxy object, typeid 'Event' at 0x217947e7100>
+2022-07-07 20:24:16,895 [MainThread  ] [DEBUG]  queue=<AutoProxy[Queue] object, typeid 'Queue' at 0x21795d85220>
+2022-07-07 20:24:16,896 [MainThread  ] [DEBUG]  Starting main func
+2022-07-07 20:24:16,897 [MainThread  ] [DEBUG]  Started source thread
+2022-07-07 20:24:16,898 [rtsSourceThr] [INFO ]  rtsSourceThread running ...
+2022-07-07 20:24:16,899 [rtsSourceThr] [DEBUG]  Waiting for stream process start running.
+2022-07-07 20:24:16,899 [MainThread  ] [DEBUG]  Started sink thread
+2022-07-07 20:24:16,900 [rtsSinkThrea] [INFO ]  rtsSinkThread running ...
+2022-07-07 20:24:16,900 [rtsSinkThrea] [DEBUG]  Waiting for stream process start running.
+2022-07-07 20:24:16,906 [rtsSourceThr] [DEBUG]  Starting rtsSourceThread loop
+2022-07-07 20:24:16,908 [rtsSinkThrea] [DEBUG]  Starting rtsSinkThread loop

@@ -22,15 +22,18 @@ if __name__ == '__main__':
     from multiprocessing import freeze_support
     freeze_support()
 
-    device = rts.hosts('asio').default_device()
+    device = rts.host(name='wasapi').default_device()
+    ctx = rts.create_context(device)
 
-    rec = device.record(3.)
+    ctx.open_stream()
+    rec = ctx.record(3., block=True)
 
-    device.play(rec)
+    ctx.play(rec, block=True)
 
     audio = random.randn(8*device.samplerate, 1)  # 8 seconds random noise
     audio /= abs(audio).max()  # normalized between [-1, 1]
 
-    recaudio = device.playrec(audio)
+    recaudio = ctx.playrec(audio, block=True)
 
-    device.play(recaudio)
+    ctx.play(recaudio, block=True)
+    ctx.close_stream()

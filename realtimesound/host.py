@@ -6,11 +6,13 @@ from sounddevice import query_hostapis, query_devices,\
 from realtimesound.device import Device
 from typing import List, Dict, Any
 
+from realtimesound.exceptions import InvalidHostName
+
 
 _default_host_id = default.hostapi
 
 
-class Host(object):
+class Host:
     """Host API object abstraction."""
 
     def __init__(self, id: int, data: Dict[str, Any]):
@@ -46,7 +48,7 @@ class Host(object):
         return self._data['name']
 
     @property
-    def defaultDevicesID(self) -> List[int]:
+    def default_devices_ids(self) -> List[int]:
         """Indexes of the default [input, output] devices for this host."""
         return [self._data['devices'].index(self._data['default_input_device']),
                 self._data['devices'].index(self._data['default_output_device'])]
@@ -105,7 +107,7 @@ class Host(object):
         if samplerate is None:
             samplerate = int(max(data['input']['default_samplerate'],
                                  data['output']['default_samplerate']))
-        device = Device(self, iop, data, samplerate)
+        device = Device(iop, data, self, samplerate)
         return device
 
     def default_device(self, samplerate: int = None) -> Device:
@@ -130,68 +132,87 @@ class Host(object):
         `devices`
 
         """
-        return self.devices(*self.defaultDevicesID, samplerate)
+        return self.devices(*self.default_devices_ids, samplerate)
 
 
-class HostsList(tuple):
+class _HostsList(tuple):
     """Listing interface for host APIs."""
 
     __slots__ = ()
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         """Human readable representation of the contents."""
-        text = '\n'.join(f"\n  {idh}) {host['name']}:\n"
-                         + '\n'.join(f"    {idd} {device['name']}: "
-                                     + f"({device['max_input_channels']} in, "
-                                       + f"{device['max_output_channels']} out)"
-                                     for idd, device in enumerate(query_devices(dev)
-                                                                  for dev in host['devices']))
-                         for idh, host in enumerate(self))
+        text = '\n'.join((f"\n  {idh}) {host.name}:\n" + ''.join(f"{host.devices()}") for idh, host in enumerate(self)))
         return text
 
+    def get(self, idx: int or str):
+        return host(idx)
 
-def hosts(idx: int or str = None) -> Host or HostsList:
+
+def __enlist_hosts(hosts_data: tuple[dict[str: Any]]):
+    return _HostsList([Host(idx, data) for idx, data in enumerate(hosts_data)])
+
+
+__all_hosts = __enlist_hosts(query_hostapis())
+
+
+def all_hosts() -> _HostsList:
     """
-    All system available hosts in a `HostsList` or return a `Host` instance.
+    All system available hosts in a `HostsList`.
 
-    If no `idx` is provided, a `HostsList` will be generated and can be
-    `print`ed for a useful visualization of the info about the host and its
-    available devices.
+    The `HostsList` generated can be `str`ed for a useful visualization of the info about the host and its available devices.
+    It also can `get()` a `Host` object by its index (`idx`) or its `name`. See `get_host` for more information.
 
-    If `idx` is not None, return a `Host` instance that can create `Device`
-    objects that can play and record audio data.
-    The given `idx` might be an integer representing the host ID or a string
-    representing the host Name.
+    HostsList
+        List of all available hosts on system.
+
+    """
+    return __all_hosts
+
+
+def host(*, idx: int = None, name: str = None) -> Host:
+    """
+    Return a `Host` instance that can create `Device` objects.
+
+    Only one of the arguments must be passed. If both are passed, only `idx` will be looked at, if both are `None`, raises an error.
 
     Parameters
     ----------
-    idx : int or str, optional
-        Host id or name. The default is None.
+    idx : int
+        Host id
+    name : str
+        Host name
 
     Raises
     ------
-    ValueError
-        If the provided name is not available or mispelled.
+    TypeError
+        No arguments provided.
+    InvalidHostNames
+        Requested name is not a host name.
 
     Returns
     -------
     Host
         System host for audio devices.
-    HostsList
-        List of all available hosts on system.
-
     """
     if idx is not None:
-        if type(idx) == str:
-            try:
-                idx = [i for i, host in enumerate(hosts())
-                       if idx.upper() in host['name'].upper().split(' ')][0]
-            except IndexError:
-                raise ValueError("Invalid API name.")
-        return Host(idx, query_hostapis(idx))
-    return HostsList(query_hostapis())
+        return __all_hosts[idx]
+    elif name is not None:
+        return _get_host_by_name(name)
+    else:
+        raise TypeError("No arguments provided")
 
 
 def default_host():
     """System host."""
-    return Host(_default_host_id, query_hostapis(_default_host_id))
+    return host(_default_host_id)
+
+
+def _is_host_name(host: Host, name: str) -> bool:
+    return name.upper() in host.name.upper()
+
+
+def _get_host_by_name(name):
+    hosts_with_name = [host for host in all_hosts() if _is_host_name(host, name)]
+    assert len(hosts_with_name) == 1, f"There are {len(hosts_with_name)} hosts with name {name}"
+    return hosts_with_name[0]

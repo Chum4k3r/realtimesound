@@ -2,30 +2,35 @@
 """Process independent stream handler."""
 
 from multiprocessing import Process, Queue, Event, Value
-from threading import Timer
 from queue import Empty
 from sounddevice import Stream, OutputStream,\
     InputStream, CallbackStop, _InputOutputPair
 from typing import List
 from numpy import zeros, ndarray
-from realtimesound._buffer import _MemoryBuffer
+from realtimesound.buffer import Sink
 
 
-_buffer =  _MemoryBuffer(0, 0, 0)  # placeholder
-
-
-class _Streamer(Process):
+class Streamer(Process):
     """Base class for audio streaming based on SoundDevice/PortAudio."""
 
-    def __init__(self, device: _InputOutputPair,
-                 samplerate: int,
-                 inputs: List[int],
-                 outputs: List[int],
-                 blocksize: int = 256,
-                 block: bool = True,
-                 running: Event = None,
-                 monitorQ: Queue = None,
-                 _has_monitor: Event = None):
+    recording = Event()
+    playing = Event()
+    finished = Event()
+    callback_safe = Event()
+    statuses: List[str] = []
+
+    def __init__(self, device: _InputOutputPair, # config
+                 samplerate: int,  # config
+                 inputs: List[int],  # config
+                 outputs: List[int],  # config
+                 sourceQ: Queue,  # message channel
+                 sinkQ: Queue,  # message channel
+                 stop_request: Event,  # estado -> requer checagem eventual (hurr durr)
+                 blocksize: int,  # config
+                 block: bool,  # mode setting -> se block==True, espera o fim da stream antes de retornar 
+                 running: Event,
+                 monitorQ: Queue,
+                 _has_monitor: Event):
         super().__init__(name='StreamerProcess')
         self.samplerate = samplerate
         self.blocksize = blocksize
@@ -34,59 +39,95 @@ class _Streamer(Process):
         self.inputs.sort()
         self.outputs = list(outputs)
         self.outputs.sort()
-        self._statuses: List[str] = []
-        self.bufferQ = Queue()
+        self.sourceQ = sourceQ
+        self.sinkQ = sinkQ
         self.monitorQ = monitorQ
-        self.finished = Event()
         self.running = running
+        self.stop_request = stop_request
         self.block = block
         self._has_monitor = _has_monitor
-        self.idx = 0
         return
 
     @property
     def channels(self):
+        """Active input/output channels count."""
         return [len(self.inputs), len(self.outputs)]
 
     def start_streaming(self):
+        """Start streaming process and wait for it to start. If blocking is set to True, waits untill process finish."""
+        self.stop_request.clear()  # evento
         self.start()
         self.running.wait()
         if self.block:
             self.finished.wait()
         return
 
-    def _process_output_data(self, outdata, frames) -> int:
-        playframes = (frames if (frames + self.idx) <= self.durationSamples
-                      else self.durationSamples - self.idx)
-        playdata = self.playdata[self.idx:self.idx + playframes, :]
-        outdata.fill(0)
-        outdata[:playframes, self.outputs] = playdata
-        return playframes, playdata
+    def run(self):
+        try:
+            with Stream(self.samplerate, self.blocksize,
+                        self.device, [self.inputs[-1] + 1,
+                                    self.outputs[-1] + 1],
+                        'float32', 'low', None,
+                        self._callback, self._finished_streaming) as self.stream:
+                self.running.set()
+                self.finished.wait()
+        except Exception as e:
+            for n in range(20):
+                print(self.stream.time, type(e), e)
+            pass
+        return
 
-    def _process_input_data(self, indata, frames) -> int:
-        recframes = (frames if (frames + self.idx) <= self.durationSamples
-                     else self.durationSamples - self.idx)
-        data = indata[:recframes, self.inputs]
-        self.bufferQ.put_nowait([data])
-        return recframes, data
+    def _callback(self, indata, outdata, frames, time, status):
+        # recording section
+        recdata, playdata = self._start_of_callback(indata, outdata)
+        if self.recording.is_set():
+            self.sinkQ.put_nowait(recdata)
 
-    def _end_of_callback(self, myframes, cbframes, status, *data):
+        # playback section
+        playdata = self.sourceQ.get_nowait()
+
+        # finishing section
+        self._end_of_callback(status, [recdata, playdata])
+        return
+
+    def _start_of_callback(self, indata, outdata):
+        self.callback_safe.clear()
+        recdata = indata[:, self.inputs]
+        playdata = outdata[:, self.outputs]
+        return recdata, playdata
+
+    def _end_of_callback(self, status, *data):
+        self.callback_safe.set()
         if self._has_monitor.is_set():
             self.monitorQ.put_nowait(data)
         if status:
-            self._statuses.append(status)
-        if myframes < cbframes:
+            self.statuses.append(status)
+        if self.stop_request.is_set():
             raise CallbackStop
         return
 
     def _finished_streaming(self):
         self.running.clear()
         self.finished.set()
-        _buffer_cleanup()
         return
 
+    def _process_output_data(self, outdata, frames) -> int:
+        playframes = (frames if (frames + self.idx) <= self.durationSamples
+                      else self.durationSamples - self.idx)
+        playdata = self.sourceQ.get_nowait()
+        outdata.fill(0)
+        outdata[:playframes, self.outputs] = playdata
+        return playdata.shape[0], playdata
 
-class _Player(_Streamer):
+    def _process_input_data(self, indata, frames) -> int:
+        recframes = (frames if (frames + self.idx) <= self.durationSamples
+                     else self.durationSamples - self.idx)
+        recdata = indata[:recframes, self.inputs]
+        self.sinkQ.put_nowait([recdata])
+        return recframes, recdata
+
+
+class Player(Streamer):
     """Player class."""
 
     def __init__(self, data: ndarray, *args, **kwargs):
@@ -111,15 +152,14 @@ class _Player(_Streamer):
         return
 
 
-class _Recorder(_Streamer):
+class Recorder(Streamer):
     """Recorder class."""
 
     def __init__(self, tlen: float, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.durationSamples = round(self.samplerate * tlen + 0.5)
-        self._buffer = zeros((self.durationSamples,
-                              self.channels[0]), dtype='float32')
-        _start_buffer(self._buffer, self.bufferQ, self.running)
+        self.buffer = zeros((self.durationSamples,
+                             self.channels[0]), dtype='float32')
         return
 
     def run(self):
@@ -138,7 +178,7 @@ class _Recorder(_Streamer):
         return
 
 
-class _PlaybackRecorder(_Streamer):
+class PlaybackRecorder(Streamer):
     """PlaybackRecorder class."""
 
     def __init__(self, data: ndarray, *args, **kwargs):
@@ -149,7 +189,6 @@ class _PlaybackRecorder(_Streamer):
                               self.channels[0]), dtype='float32')
         self._streamNumChannels = [self.inputs[-1] + 1,
                                    self.outputs[-1] + 1]
-        self._streamType = Stream
         _start_buffer(self._buffer, self.bufferQ, self.running)
         return
 
@@ -172,7 +211,7 @@ class _PlaybackRecorder(_Streamer):
         return
 
 
-class _ContinuousStreamer(_Streamer):
+class ContinuousStreamer(Streamer):
     """Continuous streaming streamer."""
 
     def __init__(self, playQ, *args, **kwargs):
@@ -260,7 +299,7 @@ class _ContinuousStreamer(_Streamer):
 
 def _start_buffer(buffer, Q, running):
     global _buffer
-    _buffer =  _MemoryBuffer(buffer, Q, running)  # placeholder
+    _buffer =  Sink(buffer, Q, running)  # placeholder
     _buffer.start()
     return
 
